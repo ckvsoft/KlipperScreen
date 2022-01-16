@@ -33,6 +33,9 @@ language: en
 
 # Allows the cursor to be displayed on the screen
 show_cursor: False
+
+# Allows to define custom systemctl command for restart like xrdp
+service: KlipperScreen
 ```
 
 ## Printer Options
@@ -69,6 +72,8 @@ bed: 40
 extruder: 195
 # Temperature for generic heaters
 heater_generic: 40
+# Temperature controlled fans (temperature_fan in klipper config)
+temperature_fan: 40
 # optional GCode to run when the option is selected
 gcode: MY_HEATSOAK_MACRO
 ```
