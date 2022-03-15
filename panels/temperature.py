@@ -1,13 +1,10 @@
-import datetime
 import gi
-import math
 import logging
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GLib, Pango
 
 from ks_includes.screen_panel import ScreenPanel
-from ks_includes.KlippyGcodes import KlippyGcodes
 from ks_includes.widgets.graph import HeaterGraph
 from ks_includes.widgets.keypad import Keypad
 
@@ -401,7 +398,7 @@ class TemperaturePanel(ScreenPanel):
         self.labels['devices'].attach(name, 0, 0, 1, 1)
         self.labels['devices'].attach(temp, 1, 0, 1, 1)
 
-        da = HeaterGraph(self._printer)
+        da = HeaterGraph(self._printer, self._gtk.get_font_size())
         da.set_vexpand(True)
         self.labels['da'] = da
 
@@ -535,8 +532,6 @@ class TemperaturePanel(ScreenPanel):
 
     def update_graph(self):
         self.labels['da'].queue_draw()
-        alloc = self.labels['devices'].get_allocation()
-        alloc = self.labels['da'].get_allocation()
         return True
 
     def update_temp(self, device, temp, target):

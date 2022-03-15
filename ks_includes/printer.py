@@ -3,7 +3,6 @@ import logging
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gdk, GLib
-from ks_includes.KlippyGcodes import KlippyGcodes
 
 
 class Printer:
@@ -44,7 +43,7 @@ class Printer:
         self.klipper = {}
         self.tempstore = {}
         if self.store_timeout is False:
-            GLib.timeout_add_seconds(1, self._update_temp_store)
+            self.store_timeout = GLib.timeout_add_seconds(1, self._update_temp_store)
 
         self.klipper = {
             "version": printer_info['software_version']
@@ -291,6 +290,22 @@ class Printer:
         if dev in self.devices and stat in self.devices[dev]:
             return self.devices[dev][stat]
         return None
+
+    def get_fan_speed(self, fan="fan", speed=None):
+        if fan not in self.config:
+            logging.debug("Error getting %s config", fan)
+            return speed if speed is not None else 0
+        if speed is None and "speed" in self.data[fan]:
+            speed = self.data[fan]["speed"]
+        if 'max_power' in self.config[fan]:
+            max_power = float(self.config[fan]['max_power'])
+            if max_power > 0:
+                speed = speed / max_power
+        if 'off_below' in self.config[fan]:
+            off_below = float(self.config[fan]['off_below'])
+            if speed < off_below:
+                speed = 0
+        return speed
 
     def get_extruder_count(self):
         return self.extrudercount
