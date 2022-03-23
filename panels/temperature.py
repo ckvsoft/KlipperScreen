@@ -22,24 +22,32 @@ class TemperaturePanel(ScreenPanel):
         self.grid = self._gtk.HomogeneousGrid()
         self.grid.attach(self.create_left_panel(), 0, 0, 1, 1)
 
-        for x in self._printer.get_tools():
-            if x not in self.active_heaters and x in self._printer.get_temp_store_devices():
-                self.select_heater(None, x)
         # When printing start in temp_delta mode and only select tools
-        logging.info(self._printer.get_state())
-        if self._printer.get_state() not in ["printing", "paused"]:
+        state = self._printer.get_state()
+        logging.info(state)
+        if state not in ["printing", "paused"]:
             self.show_preheat = True
-            for h in self._printer.get_heaters():
-                if h.startswith("temperature_sensor "):
-                    continue
-                if h not in self.active_heaters:
-                    self.select_heater(None, h)
+            selection = self._printer.get_tools() + self._printer.get_heaters()
         else:
             self.show_preheat = False
+            selection = self._printer.get_tools()
+
+        # Select heaters
+        for h in selection:
+            if h.startswith("temperature_sensor "):
+                continue
+            name = " ".join(h.split(" ")[1:])
+            # Support for hiding devices by name
+            if name.startswith("_"):
+                continue
+            if h not in self.active_heaters:
+                self.select_heater(None, h)
+
         if self._screen.vertical_mode:
             self.grid.attach(self.create_right_panel(), 0, 1, 1, 1)
         else:
             self.grid.attach(self.create_right_panel(), 1, 0, 1, 1)
+
         self.content.add(self.grid)
         self.layout.show_all()
 
@@ -170,13 +178,14 @@ class TemperaturePanel(ScreenPanel):
                     self._screen._ws.klippy.set_temp_fan_temp(" ".join(heater.split(" ")[1:]), target)
                 else:
                     logging.info("Unknown heater: %s" % heater)
-                    self._screen.show_popup_message(_("Unknown Heater ") + heater)
+                    self._screen.show_popup_message(_("Unknown Heater") + " " + heater)
                 self._printer.set_dev_stat(heater, "target", int(target))
                 logging.info("Setting %s to %d" % (heater, target))
 
     def activate(self):
         if self.graph_update is None:
-            self.graph_update = GLib.timeout_add_seconds(1, self.update_graph)
+            # This has a high impact on load
+            self.graph_update = GLib.timeout_add_seconds(5, self.update_graph)
 
     def deactivate(self):
         if self.graph_update is not None:
@@ -234,7 +243,7 @@ class TemperaturePanel(ScreenPanel):
                         self._screen._ws.klippy.set_temp_fan_temp(" ".join(heater.split(" ")[1:]), target)
                 else:
                     logging.info("Unknown heater: %s" % heater)
-                    self._screen.show_popup_message(_("Unknown Heater") + heater)
+                    self._screen.show_popup_message(_("Unknown Heater") + " " + heater)
                 if target <= MAX_TEMP:
                     if target > 0:
                         self._printer.set_dev_stat(heater, "target", int(target))
@@ -381,7 +390,7 @@ class TemperaturePanel(ScreenPanel):
             self._screen._ws.klippy.set_temp_fan_temp(" ".join(self.active_heater.split(" ")[1:]), temp)
         else:
             logging.info("Unknown heater: %s" % self.active_heater)
-            self._screen.show_popup_message(_("Unknown Heater") + self.active_heater)
+            self._screen.show_popup_message(_("Unknown Heater") + " " + self.active_heater)
         self._printer.set_dev_stat(self.active_heater, "target", temp)
 
     def create_left_panel(self):

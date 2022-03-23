@@ -5,20 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: KlipperScreen\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-26 15:48-0300\n"
-"PO-Revision-Date: 2022-02-26 15:45-0300\n"
+"POT-Creation-Date: 2022-03-21 10:26-0300\n"
+"PO-Revision-Date: 2022-03-21 10:25-0300\n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: Andrii Komarovskiy\n"
 "Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #, python-format
 msgid "%s will be updated to version"
@@ -29,6 +28,9 @@ msgstr "(за замовчуванням)"
 
 msgid "24 Hour Time"
 msgstr "24-годинний час"
+
+msgid "A FIRMWARE_RESTART may fix the issue."
+msgstr "РЕСТАРТ ПРОШИВКИ може вирішити проблему."
 
 msgid "Abort"
 msgstr "Перервати"
@@ -57,6 +59,12 @@ msgstr "Ви впевнені, що хочете перезавантажити 
 msgid "Are you sure you wish to shutdown the system?"
 msgstr "Ви впевнені, що хочете вимкнути систему?"
 
+msgid "Auto"
+msgstr "Автоматично"
+
+msgid "Auto-scroll"
+msgstr "Автоматична прокрутка"
+
 msgid "Bed Level"
 msgstr "Вирівнювання столу"
 
@@ -64,7 +72,7 @@ msgid "Bed Mesh"
 msgstr "Сітка столу"
 
 msgid "Bltouch found applied offset"
-msgstr "Bltouch знайшов застосоване зміщення"
+msgstr "Зонд знайшов застосоване зміщення"
 
 msgid "Calibrate"
 msgstr "Калібрування"
@@ -86,6 +94,9 @@ msgstr "Скасовано"
 
 msgid "Cancelling"
 msgstr "Скасування"
+
+msgid "Cannot connect to Moonraker"
+msgstr "Не можливо підключитися до Moonraker"
 
 msgid "Channel"
 msgstr "Канал"
@@ -143,9 +154,6 @@ msgstr "Вимкнути мотори"
 msgid "Disable XY"
 msgstr "Вимкнути XY"
 
-msgid "Disconnect"
-msgstr "Відключати"
-
 msgid "Displayed Macros"
 msgstr "Відображення Макросів"
 
@@ -155,9 +163,6 @@ msgstr "Відстань (мм)"
 #, python-format
 msgid "Do you want to recover %s?"
 msgstr "Ви хочете відновити %s?"
-
-msgid "Duration Only"
-msgstr "Тільки тривалість"
 
 msgid "Elapsed:"
 msgstr "Минуло:"
@@ -208,7 +213,7 @@ msgid "Hide"
 msgstr "Сховати"
 
 msgid "Hide sensors in Temp."
-msgstr "Приховати датчики темп."
+msgstr "Сховати датчик темп."
 
 msgid "Home"
 msgstr "Домашня сторінка"
@@ -268,30 +273,13 @@ msgid "Invert Z"
 msgstr "Інвертувати Z"
 
 msgid "Klipper Restart"
-msgstr "Перезапуск Klipper"
-
-msgid "Klipper Version"
-msgstr "Версія Klipper"
+msgstr "Перезапуск pper"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper відключився"
 
-msgid ""
-"Klipper has encountered an error with the micro-controller.\n"
-"Please recompile and flash."
-msgstr ""
-"Klipper зіткнувся з помилкою мікроконтролера.\n"
-"Будь ласка, перекомпілюйте та перепрошийте."
-
 msgid "Klipper has encountered an error."
 msgstr "У Klipper сталася помилка."
-
-msgid ""
-"Klipper has encountered an error.\n"
-"Issue a FIRMWARE_RESTART to attempt fixing the issue."
-msgstr ""
-"У Klipper сталася помилка.\n"
-"РЕСТАРТ_ПОШИВКИ, щоб спробувати вирішити проблему."
 
 msgid "Klipper has shutdown"
 msgstr "Klipper вимкнувся"
@@ -301,9 +289,6 @@ msgstr "Кліппер намагається стартувати"
 
 msgid "Klipper will reboot"
 msgstr "Klipper перезавантажиться"
-
-msgid "KlipperScreen Version"
-msgstr "Версія KlipperScreen"
 
 msgid "Language"
 msgstr "Мова"
@@ -350,6 +335,9 @@ msgstr "Меню"
 msgid "Modified"
 msgstr "Змінено"
 
+msgid "Moonraker: connected"
+msgstr "Підключено до Moonraker"
+
 msgid "Move"
 msgstr "Рухатися"
 
@@ -378,14 +366,20 @@ msgstr "PSK для"
 msgid "Package will be updated"
 msgid_plural "Packages will be updated"
 msgstr[0] "Пакет буде оновлено"
-msgstr[1] "Пакети будуть оновлені"
-msgstr[2] "Пакети будуть оновлені"
+msgstr[1] "Пакет буде оновлено"
+msgstr[2] "Пакет буде оновлено"
+
+msgid "Password saved"
+msgstr "Пароль збережено"
 
 msgid "Pause"
 msgstr "Пауза"
 
 msgid "Paused"
-msgstr "Призупинено"
+msgstr "Пауза"
+
+msgid "Please recompile and flash the micro-controller."
+msgstr "Будь ласка, перекомпілюйте та перепрошійте мікроконтролер."
 
 msgid "Power"
 msgstr "Живлення"
@@ -406,10 +400,10 @@ msgid "Printer Connections"
 msgstr "Підключення принтера"
 
 msgid "Printing"
-msgstr "Друкування"
+msgstr "Друк"
 
 msgid "Probe found applied offset"
-msgstr "Probe знайшов застосоване зміщення"
+msgstr "Зонд знайшов застосоване зміщення"
 
 msgid "Profile Name:"
 msgstr "Ім'я профілю:"
@@ -438,6 +432,10 @@ msgstr "Відновити"
 msgid "Retract"
 msgstr "Ретракт"
 
+#, python-format
+msgid "Retry #%s"
+msgstr "Повторіть #%s"
+
 msgid "Save"
 msgstr "Зберегти"
 
@@ -447,6 +445,9 @@ msgstr "Зберегти конфіг"
 msgid "Save configuration"
 msgstr "Зберегти конфігурацію"
 
+msgid "Screen DPMS"
+msgstr "Екран DPMS"
+
 msgid "Screen Power Off Time"
 msgstr "Вимкнути екран через"
 
@@ -455,6 +456,13 @@ msgstr "Регулювання гвинтів"
 
 msgid "Select"
 msgstr "Вибрати"
+
+msgid "Send"
+msgstr "Надіслати"
+
+#, python-format
+msgid "Sending Power ON signal to: %s"
+msgstr "Надсилання сигналу увімкнення живлення на: %s"
 
 msgid "Set Temp"
 msgstr "Встановити t°"
@@ -470,6 +478,9 @@ msgstr "Розмір"
 
 msgid "Slicer"
 msgstr "Слайсер"
+
+msgid "Slicer Time correction (%)"
+msgstr "Виправлення часу слайсера (%)"
 
 msgid "Small"
 msgstr "Малий"
@@ -531,11 +542,11 @@ msgstr "Щоб застосувати %s, потрібно перезапуст�
 msgid "Tool"
 msgstr "Інструмент"
 
+msgid "Total:"
+msgstr "Всього:"
+
 msgid "Unknown Heater"
 msgstr "Невідомий нагрівач"
-
-msgid "Unknown Heater "
-msgstr "Невідомий нагрівач "
 
 msgid "Unload"
 msgstr "Вийняти"
@@ -587,9 +598,9 @@ msgstr "Бебістеп Z-"
 
 msgid "commit"
 msgid_plural "commits"
-msgstr[0] "зміна"
-msgstr[1] "зміна"
-msgstr[2] "зміна"
+msgstr[0] "коментар"
+msgstr[1] "коментар"
+msgstr[2] "коментар"
 
 msgid "dBm"
 msgstr "dBm"
@@ -597,8 +608,8 @@ msgstr "dBm"
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "година"
-msgstr[1] "година"
-msgstr[2] "година"
+msgstr[1] "години"
+msgstr[2] "годин"
 
 msgid "minutes"
 msgstr "хвилин"
@@ -611,12 +622,3 @@ msgstr "мм/с"
 
 msgid "mm/s^2"
 msgstr "мм/с²"
-
-#~ msgid "h"
-#~ msgstr "г"
-
-#~ msgid "m"
-#~ msgstr "м"
-
-#~ msgid "s"
-#~ msgstr "с"
