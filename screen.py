@@ -257,7 +257,8 @@ class KlipperScreen(Gtk.Window):
                 "toolhead": ["homed_axes", "estimated_print_time", "print_time", "position", "extruder",
                              "max_accel", "max_accel_to_decel", "max_velocity", "square_corner_velocity"],
                 "virtual_sdcard": ["file_position", "is_active", "progress"],
-                "webhooks": ["state", "state_message"]
+                "webhooks": ["state", "state_message"],
+                "firmware_retraction": ["retract_length", "retract_speed", "unretract_extra_length", "unretract_speed"]
             }
         }
         for extruder in self.printer.get_tools():
@@ -437,17 +438,21 @@ class KlipperScreen(Gtk.Window):
     def init_style(self):
         style_provider = Gtk.CssProvider()
         css = open(os.path.join(klipperscreendir, "styles", "base.css"))
-        css_base_data = css.read()
+        css_data = css.read()
         css.close()
-        css = open(os.path.join(klipperscreendir, "styles", self.theme, "style.css"))
-        css_data = css_base_data + css.read()
-        css.close()
-
         f = open(os.path.join(klipperscreendir, "styles", "base.conf"))
         style_options = json.load(f)
         f.close()
 
-        theme_style_conf = os.path.join(klipperscreendir, "styles", self.theme, "style.conf")
+        # Load custom theme
+        theme = os.path.join(klipperscreendir, "styles", self.theme)
+        theme_style = os.path.join(theme, "style.css")
+        theme_style_conf = os.path.join(theme, "style.conf")
+
+        if os.path.exists(theme_style):
+            css = open(theme_style)
+            css_data += css.read()
+            css.close()
         if os.path.exists(theme_style_conf):
             try:
                 f = open(theme_style_conf)
@@ -768,7 +773,7 @@ class KlipperScreen(Gtk.Window):
         if prev_state not in ['paused', 'printing']:
             self.init_printer()
             self.base_panel._printer = self.printer
-            self.base_panel.show_heaters()
+        self.base_panel.show_heaters(True)
 
         self.printer_ready()
 
@@ -1007,6 +1012,7 @@ class KlipperScreen(Gtk.Window):
     def printer_printing(self):
         self.close_popup_message()
         self.show_panel('job_status', "job_status", "Print Status", 2)
+        self.base_panel.show_heaters(True)
 
     def show_keyboard(self, widget=None):
         if self.keyboard is not None:
