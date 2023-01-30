@@ -4,17 +4,16 @@ SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 KSPATH=$(sed 's/\/scripts//g' <<< $SCRIPTPATH)
 KSENV="${KLIPPERSCREEN_VENV:-${HOME}/.KlipperScreen-env}"
 
-XSERVER="xinit xinput x11-xserver-utils xdotool"
-FBTURBO="xserver-xorg-video-fbturbo"
+XSERVER="xinit xinput x11-xserver-utils xserver-xorg-input-evdev xserver-xorg-input-libinput"
 FBDEV="xserver-xorg-video-fbdev"
 PYTHON="python3-virtualenv virtualenv python3-distutils"
 PYGOBJECT="libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0"
-MISC="librsvg2-common libopenjp2-7 libatlas-base-dev wireless-tools"
-OPTIONAL="xserver-xorg-legacy fonts-nanum"
+MISC="librsvg2-common libopenjp2-7 libatlas-base-dev wireless-tools libdbus-glib-1-dev autoconf"
+OPTIONAL="xserver-xorg-legacy fonts-nanum fonts-ipafont libmpv-dev"
 
 # moonraker will check this list when updating
 # if new packages are required for existing installs add them below too.
-PKGLIST=""
+PKGLIST="libdbus-glib-1-dev autoconf fonts-ipafont libmpv-dev"
 
 Red='\033[0;31m'
 Green='\033[0;32m'
@@ -64,19 +63,13 @@ install_packages()
         exit 1
     fi
     sudo apt-get install -y $OPTIONAL
-    sudo apt-get install -y $FBTURBO
+    echo $_
+    sudo apt-get install -y $FBDEV
     if [ $? -eq 0 ]; then
-        echo_ok "Installed FBturbo driver"
+        echo_ok "Installed FBdev"
     else
-        echo $_
-        echo_error "Installation of $FBTURBO failed, trying $FBDEV"
-        sudo apt-get install -y $FBDEV
-        if [ $? -eq 0 ]; then
-            echo_ok "Installed FBdev"
-        else
-            echo_error "Installation of FBdev failed ($FBDEV)"
-            exit 1
-        fi
+        echo_error "Installation of FBdev failed ($FBDEV)"
+        exit 1
     fi
     sudo apt-get install -y $PYTHON
     if [ $? -eq 0 ]; then
@@ -99,29 +92,38 @@ install_packages()
         echo_error "Installation of Misc packages failed ($MISC)"
         exit 1
     fi
+#     ModemManager interferes with klipper comms
+#     on buster it's installed as a dependency of mpv
+#     it doesn't happen on bullseye
+    sudo systemctl mask ModemManager.service
 }
 
 create_virtualenv()
 {
     echo_text "Creating virtual environment"
     if [ ! -d ${KSENV} ]; then
-        GET_PIP="${HOME}/get-pip.py"
-        virtualenv --no-pip -p /usr/bin/python3 ${KSENV}
-        curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o ${GET_PIP}
-        ${KSENV}/bin/python ${GET_PIP}
-        rm ${GET_PIP}
+        virtualenv -p /usr/bin/python3 ${KSENV}
+#         GET_PIP="${HOME}/get-pip.py"
+#         virtualenv --no-pip -p /usr/bin/python3 ${KSENV}
+#         curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o ${GET_PIP}
+#         ${KSENV}/bin/python ${GET_PIP}
+#         rm ${GET_PIP}
     fi
 
     source ${KSENV}/bin/activate
-    while read requirements; do
-        pip --disable-pip-version-check install $requirements
+    pip --disable-pip-version-check install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
+    if [ $? -gt 0 ]; then
+        echo_error "Error: pip install exited with status code $?"
+        echo_text "Trying again with new tools..."
+        sudo apt-get install -y build-essential cmake
+        pip install --upgrade pip setuptools
+        pip install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
         if [ $? -gt 0 ]; then
-            echo "Error: pip install exited with status code $?"
-            echo "Unable to install dependencies, aborting install."
+            echo_error "Unable to install dependencies, aborting install."
             deactivate
             exit 1
         fi
-    done < ${KSPATH}/scripts/KlipperScreen-requirements.txt
+    fi
     deactivate
     echo_ok "Virtual enviroment created"
 }
@@ -151,7 +153,7 @@ modify_user()
 
 update_x11()
 {
-    if [ -e /etc/X11/Xwrapper.conf ]
+    if [ -e /etc/X11/Xwrapper.config ]
     then
         echo_text "Updating X11 Xwrapper"
         sudo sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.config
@@ -159,6 +161,13 @@ update_x11()
         echo_text "Adding X11 Xwrapper"
         echo 'allowed_users=anybody' | sudo tee /etc/X11/Xwrapper.config
     fi
+}
+
+add_desktop_file()
+{
+    DESKTOP=$(<$SCRIPTPATH/KlipperScreen.desktop)
+    mkdir -p $HOME/.local/share/applications/
+    echo "$DESKTOP" | tee $HOME/.local/share/applications/KlipperScreen.desktop > /dev/null
 }
 
 start_KlipperScreen()
@@ -177,4 +186,5 @@ modify_user
 install_systemd_service
 update_x11
 echo_ok "KlipperScreen was installed"
+add_desktop_file
 start_KlipperScreen

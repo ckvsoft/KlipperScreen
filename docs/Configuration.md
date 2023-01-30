@@ -1,7 +1,7 @@
 # Configuration
 
 Usually you don't need to create a configuration file, but if you need to change something that is not changeable in the UI
-create a blank file in `~/klipper_config/KlipperScreen.conf`, if the file already exist then just edit it.
+create a blank file in `~/printer_data/config/KlipperScreen.conf`, if the file already exist then just edit it.
 
 Write in the file only the options that need to be changed, and restart KlipperScreen.
 
@@ -13,7 +13,7 @@ Write in the file only the options that need to be changed, and restart KlipperS
 
 
 ## Main Options
-The options listd here are not changeable from within the ui.
+The options listed here are not changeable from within the ui.
 ```py
 [main]
 # Time in seconds before the Job Status page closes itself after a successful job/print
@@ -33,7 +33,9 @@ default_printer: Ender 3 Pro
 # set this to False. See Menu section below.
 use_default_menu: True
 
-
+# Define one or more moonraker power devices that turn on/off with the screensaver (CSV list)
+screen_on_devices: example1, example2
+screen_off_devices:  example1, example2
 ```
 
 ## Printer Options
@@ -43,6 +45,7 @@ Multiple printers can be defined
 [printer Ender 3 Pro]
 # Define the moonraker host/port if different from 127.0.0.1 and 7125
 moonraker_host: 127.0.0.1
+# ports 443 and 7130 will use https/wss
 moonraker_port: 7125
 # Moonraker API key if this is not connecting from a trusted client IP
 moonraker_api_key: False
@@ -77,12 +80,19 @@ calibrate_y_position: 100
 # Bed Screws
 # define the screw positons required for odd number of screws in a comma separated list
 # possible values are: bl, br, bm, fl, fr, fm, lm, rm
-# they correspond to back-left, back-right, back-middle, front-left, front-right, front-middle, left-middle, left-right
+# they correspond to back-left, back-right, back-middle, front-left, front-right, front-middle, left-middle, right-middle
 screw_positions: ""
 
 # Rotation is useful if the screen is not directly in front of the machine.
 # Valid values are 0 90 180 270
 screw_rotation: 0
+
+# Define distances and speeds for the extrude panel. CSV list 2 to 4 integers
+extrude_distances: 5, 10, 15, 25
+extrude_speeds: 1, 2, 5, 25
+
+# Camera configuration
+camera_url: http://127.0.0.1/webcam/?action=stream
 ```
 
 ## Preheat Options
@@ -190,7 +200,8 @@ KlipperScreen will search for a configuration file in the following order:
 
 1. _~/KlipperScreen.conf_
 2. _${KlipperScreen_Directory}/KlipperScreen.conf_
-3. _~/klipper_config/KlipperScreen.conf_
+3. _~/printer_data/config/KlipperScreen.conf_
+4. _~/klipper_config/KlipperScreen.conf_
 
 If you need a custom location for the configuration file, you can add -c or --configfile to the systemd file and specify
 the location of your configuration file.
