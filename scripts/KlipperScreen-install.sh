@@ -8,12 +8,8 @@ XSERVER="xinit xinput x11-xserver-utils xserver-xorg-input-evdev xserver-xorg-in
 FBDEV="xserver-xorg-video-fbdev"
 PYTHON="python3-virtualenv virtualenv python3-distutils"
 PYGOBJECT="libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0"
-MISC="librsvg2-common libopenjp2-7 libatlas-base-dev wireless-tools libdbus-glib-1-dev autoconf"
+MISC="librsvg2-common libopenjp2-7 wireless-tools libdbus-glib-1-dev autoconf"
 OPTIONAL="xserver-xorg-legacy fonts-nanum fonts-ipafont libmpv-dev"
-
-# moonraker will check this list when updating
-# if new packages are required for existing installs add them below too.
-PKGLIST="libdbus-glib-1-dev autoconf fonts-ipafont libmpv-dev"
 
 Red='\033[0;31m'
 Green='\033[0;32m'
@@ -43,7 +39,7 @@ install_packages()
     echo_text "Checking for broken packages..."
     output=$(dpkg-query -W -f='${db:Status-Abbrev} ${binary:Package}\n' | grep -E ^.[^nci])
     if [ $? -eq 0 ]; then
-        echo_text "Detectected broken pacakges. Attempting to fix"
+        echo_text "Detected broken packages. Attempting to fix"
         sudo apt-get -f install
         output=$(dpkg-query -W -f='${db:Status-Abbrev} ${binary:Package}\n' | grep -E ^.[^nci])
         if [ $? -eq 0 ]; then
@@ -73,16 +69,16 @@ install_packages()
     fi
     sudo apt-get install -y $PYTHON
     if [ $? -eq 0 ]; then
-        echo_ok "Installed Python dependincies"
+        echo_ok "Installed Python dependencies"
     else
-        echo_error "Installation of Python dependincies failed ($PYTHON)"
+        echo_error "Installation of Python dependencies failed ($PYTHON)"
         exit 1
     fi
     sudo apt-get install -y $PYGOBJECT
     if [ $? -eq 0 ]; then
-        echo_ok "Installed PyGobject dependincies"
+        echo_ok "Installed PyGobject dependencies"
     else
-        echo_error "Installation of PyGobject dependincies failed ($PYGOBJECT)"
+        echo_error "Installation of PyGobject dependencies failed ($PYGOBJECT)"
         exit 1
     fi
     sudo apt-get install -y $MISC
@@ -96,6 +92,16 @@ install_packages()
 #     on buster it's installed as a dependency of mpv
 #     it doesn't happen on bullseye
     sudo systemctl mask ModemManager.service
+}
+
+check_requirements()
+{
+    echo_text "Checking Python version"
+    python3 --version
+    if ! python3 -c 'import sys; exit(1) if sys.version_info <= (3,7) else exit(0)'; then
+        echo_text 'Not supported'
+        exit 1
+    fi
 }
 
 create_virtualenv()
@@ -168,6 +174,7 @@ add_desktop_file()
     DESKTOP=$(<$SCRIPTPATH/KlipperScreen.desktop)
     mkdir -p $HOME/.local/share/applications/
     echo "$DESKTOP" | tee $HOME/.local/share/applications/KlipperScreen.desktop > /dev/null
+    sudo cp $SCRIPTPATH/../styles/icon.svg /usr/share/icons/hicolor/scalable/apps/KlipperScreen.svg
 }
 
 start_KlipperScreen()
@@ -177,10 +184,11 @@ start_KlipperScreen()
     sudo systemctl start KlipperScreen
 }
 if [ "$EUID" == 0 ]
-    then echo_error "Plaease do not run this script as root"
+    then echo_error "Please do not run this script as root"
     exit 1
 fi
 install_packages
+check_requirements
 create_virtualenv
 modify_user
 install_systemd_service
